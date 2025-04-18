@@ -1,0 +1,1653 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     58828,       1645]
+NotebookOptionsPosition[     55202,       1580]
+NotebookOutlinePosition[     55595,       1596]
+CellTagsIndexPosition[     55552,       1593]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+Configurations of colored vertices of polyhedra: the five Platonic solids\
+\>", "Text",
+ CellChangeTimes->{{3.9502747443796387`*^9, 3.950274752550708*^9}, {
+  3.9502749160349083`*^9, 
+  3.9502749224343433`*^9}},ExpressionUUID->"ad500510-99f3-484c-9ed5-\
+6b117ae06390"],
+
+Cell[BoxData[
+ RowBox[{"NotebookEvaluate", "[", 
+  RowBox[{
+   RowBox[{"NotebookDirectory", "[", "]"}], " ", "<>", " ", 
+   "\"\<Rotation Reflection - Matrices Groups Polytopes.nb\>\""}], 
+  "]"}]], "Input",
+ CellLabel->
+  "In[1393]:=",ExpressionUUID->"ee14058a-bd97-412f-bfdc-2b31e187e152"],
+
+Cell[CellGroupData[{
+
+Cell["Vertices, Neighbors, and Groups", "Section",
+ CellChangeTimes->{{3.9502749865368223`*^9, 3.9502750093856163`*^9}, {
+  3.950275523794936*^9, 3.9502755436752787`*^9}, {3.950275590420309*^9, 
+  3.9502755930045557`*^9}, {3.950277252044697*^9, 
+  3.9502772571799393`*^9}},ExpressionUUID->"68b04ba3-2594-4f9a-8122-\
+d12caa410cd2"],
+
+Cell["\<\
+Vertices: PHVerts
+Arg: number of faces in the Platonic solid: 4, 6, 8, 12, 20
+Returns: list of vertices that are not normalized
+
+Neighbors: FindNgbrDist
+Args: vertex vector, list of all vertex vectors
+Returns: nearest-neighbor distance as an inner product of vertex vectors
+
+FindNgbrIxs: For a list of vertex vectors, finds a list of the indices of the \
+neighbors of each one
+FindNgbrPairs: Find pairs of indices from each vertex to its neighbor
+FindNgbrPairsAsc: Selects what is in ascending order
+ShowNgbrs: Shows the neighbor sets as edges between vertices
+
+Groups: PHGroup
+Args: id of polyhedron, type of 3D group: V, Vh, T, Th, Td, O, Oh, I, Ih
+Returns for each group element, which are\
+\>", "Text",
+ CellChangeTimes->{{3.950277449138475*^9, 3.9502774517863693`*^9}, {
+  3.950277482538872*^9, 3.95027774957764*^9}, {3.950279442401555*^9, 
+  3.950279522548889*^9}},ExpressionUUID->"4e89767f-b28d-4e83-9964-\
+8192a783eb9a"],
+
+Cell[CellGroupData[{
+
+Cell["Vertices", "Subsection",
+ CellChangeTimes->{{3.950275551795249*^9, 
+  3.950275553227453*^9}},ExpressionUUID->"4402e364-33d8-4283-9ebd-\
+56992a5f6b6b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PHVerts", " ", "=", " ", 
+   RowBox[{"<|", "|>"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275091481395*^9, 3.950275098037911*^9}},
+ CellLabel->
+  "In[1414]:=",ExpressionUUID->"608feebf-d043-4cdc-a863-0b2362312078"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PHVerts", "[", "8", "]"}], " ", "=", " ", 
+   RowBox[{"VerticesOP", "[", "3", "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275062332871*^9, 3.950275112525868*^9}},
+ CellLabel->
+  "In[1415]:=",ExpressionUUID->"e63e945c-3e13-452c-9fdd-207e3891a2e0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PHVerts", "[", "6", "]"}], " ", "=", " ", 
+   RowBox[{"VerticesHC", "[", "3", "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275047714669*^9, 3.950275054239882*^9}, {
+  3.950275123735458*^9, 3.950275132622467*^9}},
+ CellLabel->
+  "In[1416]:=",ExpressionUUID->"a6d2726d-6ce3-425b-9c60-209f2bab91bd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PHVerts", "[", "4", "]"}], " ", "=", " ", 
+   RowBox[{"Select", "[", 
+    RowBox[{
+     RowBox[{"PHVerts", "[", "6", "]"}], ",", 
+     RowBox[{"vert", " ", "|->", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Times", " ", "@@", " ", "vert"}], ")"}], " ", ">", " ", 
+        "0"}], ")"}]}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275134897339*^9, 3.950275165759779*^9}},
+ CellLabel->
+  "In[1417]:=",ExpressionUUID->"42635816-6f5f-4644-a19b-33a555615fe3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PHVerts", "[", "12", "]"}], " ", "=", " ", 
+   RowBox[{"Most", " ", "/@", " ", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"GroupQt", "[", "\"\<I\>\"", "]"}], ",", 
+      RowBox[{"vec", " ", "|->", " ", 
+       RowBox[{
+        RowBox[{"Last", "[", "vec", "]"}], "==", 
+        RowBox[{"1", "/", "2"}]}]}]}], "]"}]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275307255158*^9, 3.950275316698579*^9}, {
+  3.950275350948423*^9, 3.9502753512268553`*^9}, {3.950275387373293*^9, 
+  3.950275462304644*^9}},
+ CellLabel->
+  "In[1418]:=",ExpressionUUID->"59bb7a19-f456-45b4-bc0a-32f6bd096a48"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PHVerts", "[", "20", "]"}], " ", "=", " ", 
+   RowBox[{"Most", " ", "/@", " ", 
+    RowBox[{"Select", "[", 
+     RowBox[{
+      RowBox[{"GroupQt", "[", "\"\<I\>\"", "]"}], ",", 
+      RowBox[{"vec", " ", "|->", " ", 
+       RowBox[{
+        RowBox[{"Last", "[", "vec", "]"}], "==", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"1", "/", "4"}], ")"}], 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Sqrt", "[", "5", "]"}], "+", "1"}], ")"}]}]}]}]}], 
+     "]"}]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.950275473113653*^9, 3.950275483929162*^9}},
+ CellLabel->
+  "In[1419]:=",ExpressionUUID->"cbf50666-2640-4dfa-87f3-89cdd74782d3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Neighbors", "Subsection",
+ CellChangeTimes->{{3.950275579669532*^9, 
+  3.950275619380974*^9}},ExpressionUUID->"09cdf140-60ca-4559-a9f6-\
+dc68e4aa3b8b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FindNgbrDist", "[", 
+   RowBox[{"vt_", ",", "vts_"}], "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"SortBy", "[", 
+    RowBox[{
+     RowBox[{"Expand", "[", 
+      RowBox[{"vts", ".", "vt"}], "]"}], ",", 
+     RowBox[{"val", " ", "|->", " ", 
+      RowBox[{"-", 
+       RowBox[{"N", "[", "val", "]"}]}]}]}], "]"}], "[", 
+   RowBox[{"[", "2", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.950275734353794*^9, 3.950275764048038*^9}, {
+  3.950275812205805*^9, 3.950275845305882*^9}, {3.9502759591265707`*^9, 
+  3.950275969156774*^9}, {3.950276225715241*^9, 3.9502762274587593`*^9}},
+ CellLabel->
+  "In[1445]:=",ExpressionUUID->"f37d2b33-dc8e-42f3-9930-33badc8e9269"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FindNgbrIxs", "[", 
+   RowBox[{"vt_", ",", "vts_"}], "]"}], " ", ":=", " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"NgbrDist", " ", "|->", " ", 
+     RowBox[{"Select", "[", 
+      RowBox[{
+       RowBox[{"Range", "[", 
+        RowBox[{"Length", "[", "vts", "]"}], "]"}], ",", 
+       RowBox[{"i", " ", "|->", " ", 
+        RowBox[{
+         RowBox[{"Expand", "[", 
+          RowBox[{"vt", ".", 
+           RowBox[{"vts", "[", 
+            RowBox[{"[", "i", "]"}], "]"}]}], "]"}], "==", "NgbrDist"}]}]}], 
+      "]"}]}], ")"}], " ", "@", " ", 
+   RowBox[{"FindNgbrDist", "[", 
+    RowBox[{"vt", ",", "vts"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.9502761851238832`*^9, 3.950276279627283*^9}},
+ CellLabel->
+  "In[1446]:=",ExpressionUUID->"45aa2d58-9478-4f59-8a90-13728fdf5a9d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FindNgbrIxs", "[", "vts_", "]"}], " ", ":=", " ", 
+  RowBox[{"Table", "[", 
+   RowBox[{
+    RowBox[{"FindNgbrIxs", "[", 
+     RowBox[{"vt", ",", "vts"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"vt", ",", "vts"}], "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.950276282759802*^9, 3.950276306915896*^9}},
+ CellLabel->
+  "In[1447]:=",ExpressionUUID->"c344808f-6e1c-48ab-ab38-2ca23b190d13"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FindNgbrPairs", "[", "vts_", "]"}], " ", ":=", " ", 
+  RowBox[{"Flatten", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"ixsets", " ", "|->", " ", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"n", ",", 
+             RowBox[{"ixsets", "[", 
+              RowBox[{"[", 
+               RowBox[{"n", ",", "k"}], "]"}], "]"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"k", ",", 
+             RowBox[{"Length", "[", 
+              RowBox[{"ixsets", "[", 
+               RowBox[{"[", "n", "]"}], "]"}], "]"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"n", ",", 
+           RowBox[{"Length", "[", "ixsets", "]"}]}], "}"}]}], "]"}]}], ")"}], 
+     " ", "@", " ", 
+     RowBox[{"FindNgbrIxs", "[", "vts", "]"}]}], ",", "1"}], "]"}]}]], "Input",\
+
+ CellChangeTimes->{{3.9502766095399103`*^9, 3.95027671866107*^9}, {
+  3.9502769083504267`*^9, 3.950276912658955*^9}},
+ CellLabel->
+  "In[1466]:=",ExpressionUUID->"206d7f84-13dd-42b1-bfeb-6244c64d9c2d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"FindNgbrPairsAsc", "[", "vts_", "]"}], " ", ":=", " ", 
+  RowBox[{"Select", "[", 
+   RowBox[{
+    RowBox[{"FindNgbrPairs", "[", "vts", "]"}], ",", "OrderedQ"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.950276927054681*^9, 3.9502769474441547`*^9}},
+ CellLabel->
+  "In[1467]:=",ExpressionUUID->"3799ebc1-6af7-4ae5-8538-da0c58c88109"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ShowNgbrs", "[", "vts_", "]"}], " ", ":=", " ", 
+  RowBox[{"Graphics3D", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"GraphicsComplex", "[", 
+       RowBox[{"vts", ",", 
+        RowBox[{"Line", "[", 
+         RowBox[{"FindNgbrPairsAsc", "[", "vts", "]"}], "]"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+        RowBox[{"Point", "[", "vts", "]"}]}], "}"}]}], "}"}], ",", 
+    RowBox[{"SphericalRegion", "->", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.95027676252295*^9, 3.950276804536701*^9}, {
+  3.950276838778995*^9, 3.950276839417358*^9}, {3.9502769636288137`*^9, 
+  3.950277202562829*^9}},
+ CellLabel->
+  "In[1482]:=",ExpressionUUID->"8de710ce-8861-4528-94ba-225ee9b8c686"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Groups", "Subsection",
+ CellChangeTimes->{{3.9502774316337233`*^9, 
+  3.950277432649994*^9}},ExpressionUUID->"44de37a1-2756-4802-b6be-\
+009e34ebfd76"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PHGroup", "[", 
+   RowBox[{"n_", ",", "gtype_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"vts", ",", "grp", ",", "vtixmap", ",", "gpixs"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"vts", " ", "=", " ", 
+      RowBox[{"PHVerts", "[", "n", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "vts", "]"}], "=!=", "List"}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"grp", " ", "=", " ", 
+      RowBox[{
+       RowBox[{"Group3D", "[", "gtype", "]"}], " ", "/.", " ", 
+       RowBox[{
+        RowBox[{"Sqrt", "[", "5", "]"}], "->", 
+        RowBox[{"-", 
+         RowBox[{"Sqrt", "[", "5", "]"}]}]}]}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "grp", "]"}], "=!=", "List"}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"vtixmap", " ", "=", " ", 
+      RowBox[{"<|", 
+       RowBox[{"Thread", "[", 
+        RowBox[{
+         RowBox[{"Expand", "[", "vts", "]"}], "->", 
+         RowBox[{"Range", "[", 
+          RowBox[{"Length", "[", "vts", "]"}], "]"}]}], "]"}], "|>"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"gpixs", " ", "=", " ", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"vtixmap", "[", 
+           RowBox[{"Expand", "[", 
+            RowBox[{"mat", ".", "vt"}], "]"}], "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"vt", ",", "vts"}], "}"}]}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"mat", ",", "grp"}], "}"}]}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"(", 
+         RowBox[{"And", " ", "@@", " ", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"ix", " ", "|->", " ", 
+             RowBox[{
+              RowBox[{"Head", "[", "ix", "]"}], "===", "Integer"}]}], ")"}], 
+           " ", "/@", " ", 
+           RowBox[{"Flatten", "[", "gpixs", "]"}]}]}], ")"}]}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     "gpixs"}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.950278848045187*^9, 3.950278923595562*^9}, {
+  3.9502789551323767`*^9, 3.950279016470524*^9}, {3.950279073548265*^9, 
+  3.950279154762189*^9}, {3.950279184781241*^9, 3.95027935773625*^9}, {
+  3.950279594286138*^9, 3.950279625022821*^9}, {3.950279752394774*^9, 
+  3.950279785858642*^9}},
+ CellLabel->
+  "In[1529]:=",ExpressionUUID->"bd48c16a-1aaf-40ad-a6fd-45e062985ee9"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Vertex Configurations", "Section",
+ CellChangeTimes->{{3.950280717094244*^9, 
+  3.950280720541449*^9}},ExpressionUUID->"cf8658c5-0292-4f4c-aaf5-\
+6320e8525910"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"VertConfigs", "[", 
+   RowBox[{"n_", ",", "gtype_", ",", "numvtypes_"}], "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"vts", ",", "grp", ",", "baseconfig", ",", "allconfigs", ",", 
+      RowBox[{"configs", "=", 
+       RowBox[{"{", "}"}]}], ",", "cfg"}], "}"}], ",", "\[IndentingNewLine]", 
+    
+    RowBox[{
+     RowBox[{"vts", " ", "=", " ", 
+      RowBox[{"PHVerts", "[", "n", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "vts", "]"}], " ", "=!=", " ", "List"}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "[", "vts", "]"}], " ", "=!=", " ", 
+        RowBox[{"Total", "[", "numvtypes", "]"}]}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"grp", " ", "=", " ", 
+      RowBox[{"PHGroup", "[", 
+       RowBox[{"n", ",", "gtype"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "grp", "]"}], "=!=", "List"}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"baseconfig", " ", "=", " ", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"ConstantArray", "[", 
+          RowBox[{"k", ",", 
+           RowBox[{"numvtypes", "[", 
+            RowBox[{"[", "k", "]"}], "]"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"k", ",", 
+           RowBox[{"Length", "[", "numvtypes", "]"}]}], "}"}]}], "]"}], 
+       "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"allconfigs", " ", "=", " ", 
+      RowBox[{"Permutations", "[", "baseconfig", "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"While", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Length", "[", "allconfigs", "]"}], ">", "0"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"cfg", " ", "=", " ", 
+         RowBox[{"First", "[", "allconfigs", "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"AppendTo", "[", 
+         RowBox[{"configs", ",", "cfg"}], "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"allconfigs", " ", "=", " ", 
+         RowBox[{"Complement", "[", 
+          RowBox[{"allconfigs", ",", 
+           RowBox[{"Union", "[", 
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{"cfg", "[", 
+               RowBox[{"[", "gel", "]"}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"gel", ",", "grp"}], "}"}]}], "]"}], "]"}]}], "]"}]}], 
+        ";"}]}], "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+     "configs"}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.950281816924777*^9, 3.950281921698298*^9}, {
+  3.950281958012349*^9, 3.950282173327256*^9}, {3.9502822330896893`*^9, 
+  3.950282282482854*^9}},
+ CellLabel->
+  "In[1542]:=",ExpressionUUID->"5fab77a2-0167-425b-ba58-7f7b345a1fda"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"VertCfgShow", "[", 
+   RowBox[{"n_", ",", "gtype_", ",", "numvtypes_", ",", "colors_"}], "]"}], 
+  " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"configs", ",", "vts", ",", "eds", ",", "edlns", ",", "vtclrs"}],
+      "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"configs", " ", "=", " ", 
+      RowBox[{"VertConfigs", "[", 
+       RowBox[{"n", ",", "gtype", ",", "numvtypes"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Head", "[", "configs", "]"}], "=!=", "List"}], ",", 
+       RowBox[{"Return", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"vts", " ", "=", " ", 
+      RowBox[{"PHVerts", "[", "n", "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"eds", " ", "=", 
+      RowBox[{"FindNgbrPairsAsc", "[", "vts", "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"vtclrs", " ", "=", " ", 
+         RowBox[{"colors", "[", 
+          RowBox[{"[", "cfg", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"edlns", " ", "=", " ", 
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"Line", "[", 
+            RowBox[{
+             RowBox[{"vts", "[", 
+              RowBox[{"[", "ed", "]"}], "]"}], ",", 
+             RowBox[{"VertexColors", "->", 
+              RowBox[{"vtclrs", "[", 
+               RowBox[{"[", "ed", "]"}], "]"}]}]}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"ed", ",", "eds"}], "}"}]}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Graphics3D", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Thickness", "[", "Medium", "]"}], ",", "edlns", ",", 
+            RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+            RowBox[{"Point", "[", 
+             RowBox[{"vts", ",", 
+              RowBox[{"VertexColors", "->", "vtclrs"}]}], "]"}]}], "}"}], ",", 
+          RowBox[{"SphericalRegion", "->", "True"}]}], "]"}]}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{"cfg", ",", "configs"}], "}"}]}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.950290494451909*^9, 3.950290686062788*^9}, {
+  3.950290746540414*^9, 3.950290782621416*^9}, {3.950291398954096*^9, 
+  3.950291474858293*^9}, {3.950291648144868*^9, 3.95029165764497*^9}, {
+  3.950291691142055*^9, 3.950291790889648*^9}, {3.950291873353285*^9, 
+  3.950291916372072*^9}},
+ CellLabel->
+  "In[1589]:=",ExpressionUUID->"5ed60b60-af84-4260-b0e2-a67ef12accd1"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Section",
+ CellChangeTimes->{{3.9502911690294456`*^9, 
+  3.950291170981059*^9}},ExpressionUUID->"2751102e-1fa4-4f89-9f6d-\
+84500f62bd1e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"VertCfgShow", "[", 
+  RowBox[{"4", ",", "\"\<T\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"Red", ",", 
+     RowBox[{"Darker", "[", "Green", "]"}], ",", "Blue", ",", "Black"}], 
+    "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.9502919802492657`*^9, 3.950291992336643*^9}},
+ CellLabel->
+  "In[1593]:=",ExpressionUUID->"23c630ad-440c-49b9-b4bb-f7928a023099"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, 1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         GrayLevel[0]}], Line3DBox[{{-1, 1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         GrayLevel[0]}], Line3DBox[{{1, -1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         GrayLevel[0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, 1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1], 
+         GrayLevel[0]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{1.856165225458831, -2.54417169707796, 1.2376756568603986`},
+    ViewVertical->{0.10251316778404382`, -0.24193873551684508`, 
+     0.9648609737611894}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, 1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         GrayLevel[0]}], Line3DBox[{{-1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         GrayLevel[0]}], Line3DBox[{{-1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, -1, -1}, {1, 1, 1}},
+       VertexColors->{
+         GrayLevel[0], 
+         RGBColor[0, 0, 1]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, 1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         GrayLevel[0], 
+         RGBColor[0, 0, 1]}]}},
+    SphericalRegion->True]}], "}"}]], "Output",
+ CellChangeTimes->{3.9502919930558968`*^9},
+ CellLabel->
+  "Out[1593]=",ExpressionUUID->"abc80444-b01d-4c8e-a435-dad61fe11a4f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"VertCfgShow", "[", 
+  RowBox[{"4", ",", "\"\<Td\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1", ",", "1", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"Red", ",", 
+     RowBox[{"Darker", "[", "Green", "]"}], ",", "Blue", ",", "Black"}], 
+    "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.9502919802492657`*^9, 3.950292010104384*^9}},
+ CellLabel->
+  "In[1595]:=",ExpressionUUID->"c6af7fd5-ed64-40be-b424-511776c187a8"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  Graphics3DBox[
+   {Thickness[Medium], {Line3DBox[{{-1, -1, 1}, {-1, 1, -1}},
+      VertexColors->{
+        RGBColor[1, 0, 0], 
+        RGBColor[0, 
+         Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, -1}},
+      VertexColors->{
+        RGBColor[1, 0, 0], 
+        RGBColor[0, 0, 1]}], Line3DBox[{{-1, -1, 1}, {1, 1, 1}},
+      VertexColors->{
+        RGBColor[1, 0, 0], 
+        GrayLevel[0]}], Line3DBox[{{-1, 1, -1}, {1, -1, -1}},
+      VertexColors->{
+        RGBColor[0, 
+         Rational[2, 3], 0], 
+        RGBColor[0, 0, 1]}], Line3DBox[{{-1, 1, -1}, {1, 1, 1}},
+      VertexColors->{
+        RGBColor[0, 
+         Rational[2, 3], 0], 
+        GrayLevel[0]}], Line3DBox[{{1, -1, -1}, {1, 1, 1}},
+      VertexColors->{
+        RGBColor[0, 0, 1], 
+        GrayLevel[0]}]}, 
+    {PointSize[Large], 
+     Point3DBox[{{-1, -1, 1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, 1}},
+      VertexColors->{
+        RGBColor[1, 0, 0], 
+        RGBColor[0, 
+         Rational[2, 3], 0], 
+        RGBColor[0, 0, 1], 
+        GrayLevel[0]}]}},
+   SphericalRegion->True], "}"}]], "Output",
+ CellChangeTimes->{3.9502920104502487`*^9},
+ CellLabel->
+  "Out[1595]=",ExpressionUUID->"c5df615c-6599-468c-9bd2-e617db4a1259"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"VertCfgShow", "[", 
+  RowBox[{"8", ",", "\"\<O\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "2", ",", "2"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"Red", ",", 
+     RowBox[{"Darker", "[", "Green", "]"}], ",", "Blue"}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.950290688343272*^9, 3.9502907105888987`*^9}, {
+  3.950290825013699*^9, 3.950290881132515*^9}, {3.950290930678154*^9, 
+  3.950290962990199*^9}},
+ CellLabel->
+  "In[1590]:=",ExpressionUUID->"da3be6e5-ebfd-4883-ba7f-6ded7b2c2104"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{-0.7261096301686427, -2.3592853136164003`, 
+     2.3144194982609188`},
+    ViewVertical->{0.3290854893852974, -0.022926317534389697`, 
+     0.9440217818675327}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{-0.7323184498275762, -3.0810464163183164`, \
+-1.1919994414991129`},
+    ViewVertical->{-0.3269731159516071, -0.7786181443002135, 
+     0.5355766675382612}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{0.5740508656830993, -2.416775266363705, 2.2977517088452197`},
+    ViewVertical->{-0.10208358979128293`, 0.09010013445602423, 
+     0.9906870880688472}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 1, 0}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 0, 0}, {0, -1, 0}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 0, 1]}], Line3DBox[{{-1, 0, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 0, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, 1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, 1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, -1, 0}, {0, 0, 1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{0, -1, 0}, {0, 0, -1}},
+       VertexColors->{
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0,
+        0, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 0, 1], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    SphericalRegion->True]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.95029071204713*^9, 3.950290786120749*^9, {3.950290825952981*^9, 
+   3.950290850128379*^9}, 3.950290881750867*^9, {3.9502909378977833`*^9, 
+   3.950290963514069*^9}, 3.950291427634836*^9, {3.950291458419652*^9, 
+   3.950291478691907*^9}, {3.950291741009561*^9, 3.950291764706612*^9}, {
+   3.950291877484273*^9, 3.950291918997674*^9}},
+ CellLabel->
+  "Out[1590]=",ExpressionUUID->"6d513cdf-ae49-4f31-ac6d-8aa976a9452e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"VertCfgShow", "[", 
+  RowBox[{"6", ",", "\"\<O\>\"", ",", 
+   RowBox[{"{", 
+    RowBox[{"4", ",", "4"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"Red", ",", 
+     RowBox[{"Darker", "[", "Green", "]"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.950290688343272*^9, 3.9502907105888987`*^9}, {
+  3.950290825013699*^9, 3.950290881132515*^9}, {3.950290930678154*^9, 
+  3.950290962990199*^9}, {3.9502911161523952`*^9, 3.9502911244525003`*^9}},
+ CellLabel->
+  "In[1591]:=",ExpressionUUID->"733e6722-7241-4866-9340-f91e5b67fe8a"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{2.0089092170428007`, -1.2805357446300858`, 2.403021424042065},
+    
+    ViewVertical->{-0.014979243572730581`, 0.2373759812976509, 
+     0.9713023554820436}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    ImageSize->{180., 180.},
+    SphericalRegion->True,
+    ViewPoint->{-1.5764151969487705`, -2.091816671844661, 2.142246049878887},
+    ViewVertical->{-0.14386279327589135`, 0.1534986148568576, 
+     0.9776204130171814}], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0]}]}},
+    SphericalRegion->True], ",", 
+   Graphics3DBox[
+    {Thickness[Medium], {Line3DBox[{{-1, -1, -1}, {-1, -1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, -1}, {-1, 1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, -1}, {1, -1, -1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{-1, -1, 1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, -1, 1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, -1}, {-1, 1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{-1, 1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, -1, -1}, {1, -1, 1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, -1}, {1, 1, -1}},
+       VertexColors->{
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0]}], Line3DBox[{{1, -1, 1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}], Line3DBox[{{1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}, 
+     {PointSize[Large], 
+      Point3DBox[{{-1, -1, -1}, {-1, -1, 1}, {-1, 1, -1}, {-1, 1, 1}, {
+       1, -1, -1}, {1, -1, 1}, {1, 1, -1}, {1, 1, 1}},
+       VertexColors->{
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[1, 0, 0], 
+         RGBColor[0, 
+          Rational[2, 3], 0]}]}},
+    SphericalRegion->True]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.9502911260426283`*^9, 3.950291478810184*^9, {3.950291741130599*^9, 
+   3.950291765054903*^9}, 3.950291919427483*^9},
+ CellLabel->
+  "Out[1591]=",ExpressionUUID->"e1995b81-08ba-43fd-8e42-639ef7debc13"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 772},
+WindowMargins->{{Automatic, -4}, {Automatic, 47}},
+FrontEndVersion->"14.1 for Mac OS X x86 (64-bit) (July 16, 2024)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"e802f890-5287-4ddb-a294-f96813551f34"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 278, 6, 33, "Text",ExpressionUUID->"ad500510-99f3-484c-9ed5-6b117ae06390"],
+Cell[839, 28, 291, 7, 49, "Input",ExpressionUUID->"ee14058a-bd97-412f-bfdc-2b31e187e152"],
+Cell[CellGroupData[{
+Cell[1155, 39, 330, 5, 66, "Section",ExpressionUUID->"68b04ba3-2594-4f9a-8122-d12caa410cd2"],
+Cell[1488, 46, 938, 22, 361, "Text",ExpressionUUID->"4e89767f-b28d-4e83-9964-8192a783eb9a"],
+Cell[CellGroupData[{
+Cell[2451, 72, 156, 3, 53, "Subsection",ExpressionUUID->"4402e364-33d8-4283-9ebd-56992a5f6b6b"],
+Cell[2610, 77, 254, 6, 29, "Input",ExpressionUUID->"608feebf-d043-4cdc-a863-0b2362312078"],
+Cell[2867, 85, 300, 7, 29, "Input",ExpressionUUID->"e63e945c-3e13-452c-9fdd-207e3891a2e0"],
+Cell[3170, 94, 349, 8, 29, "Input",ExpressionUUID->"a6d2726d-6ce3-425b-9c60-209f2bab91bd"],
+Cell[3522, 104, 550, 15, 29, "Input",ExpressionUUID->"42635816-6f5f-4644-a19b-33a555615fe3"],
+Cell[4075, 121, 646, 16, 29, "Input",ExpressionUUID->"59bb7a19-f456-45b4-bc0a-32f6bd096a48"],
+Cell[4724, 139, 709, 20, 29, "Input",ExpressionUUID->"cbf50666-2640-4dfa-87f3-89cdd74782d3"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[5470, 164, 157, 3, 37, "Subsection",ExpressionUUID->"09cdf140-60ca-4559-a9f6-dc68e4aa3b8b"],
+Cell[5630, 169, 700, 17, 29, "Input",ExpressionUUID->"f37d2b33-dc8e-42f3-9930-33badc8e9269"],
+Cell[6333, 188, 817, 22, 70, "Input",ExpressionUUID->"45aa2d58-9478-4f59-8a90-13728fdf5a9d"],
+Cell[7153, 212, 430, 11, 29, "Input",ExpressionUUID->"c344808f-6e1c-48ab-ab38-2ca23b190d13"],
+Cell[7586, 225, 1133, 31, 90, "Input",ExpressionUUID->"206d7f84-13dd-42b1-bfeb-6244c64d9c2d"],
+Cell[8722, 258, 370, 9, 29, "Input",ExpressionUUID->"3799ebc1-6af7-4ae5-8538-da0c58c88109"],
+Cell[9095, 269, 809, 20, 70, "Input",ExpressionUUID->"8de710ce-8861-4528-94ba-225ee9b8c686"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[9941, 294, 156, 3, 37, "Subsection",ExpressionUUID->"44de37a1-2756-4802-b6be-009e34ebfd76"],
+Cell[10100, 299, 2771, 71, 213, "Input",ExpressionUUID->"bd48c16a-1aaf-40ad-a6fd-45e062985ee9"]
+}, Closed]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[12920, 376, 166, 3, 52, "Section",ExpressionUUID->"cf8658c5-0292-4f4c-aaf5-6320e8525910"],
+Cell[13089, 381, 3106, 75, 335, "Input",ExpressionUUID->"5fab77a2-0167-425b-ba58-7f7b345a1fda"],
+Cell[16198, 458, 2656, 64, 233, "Input",ExpressionUUID->"5ed60b60-af84-4260-b0e2-a67ef12accd1"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[18891, 527, 155, 3, 52, "Section",ExpressionUUID->"2751102e-1fa4-4f89-9f6d-84500f62bd1e"],
+Cell[CellGroupData[{
+Cell[19071, 534, 459, 11, 29, "Input",ExpressionUUID->"23c630ad-440c-49b9-b4bb-f7928a023099"],
+Cell[19533, 547, 2587, 73, 210, "Output",ExpressionUUID->"abc80444-b01d-4c8e-a435-dad61fe11a4f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22157, 625, 460, 11, 29, "Input",ExpressionUUID->"c6af7fd5-ed64-40be-b424-511776c187a8"],
+Cell[22620, 638, 1241, 36, 210, "Output",ExpressionUUID->"c5df615c-6599-468c-9bd2-e617db4a1259"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23898, 679, 531, 13, 29, "Input",ExpressionUUID->"da3be6e5-ebfd-4883-ba7f-6ded7b2c2104"],
+Cell[24432, 694, 13363, 378, 423, "Output",ExpressionUUID->"6d513cdf-ae49-4f31-ac6d-8aa976a9452e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37832, 1077, 555, 12, 29, "Input",ExpressionUUID->"733e6722-7241-4866-9340-f91e5b67fe8a"],
+Cell[38390, 1091, 16784, 485, 636, "Output",ExpressionUUID->"e1995b81-08ba-43fd-8e42-639ef7debc13"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
